@@ -32,7 +32,7 @@ export default function Home() {
       ):
       (
       <div>
-        <Message roles='user' content='What is next Js'}
+        <Message  roles='user' content='what is next JS'/>
       </div>
     )
     }

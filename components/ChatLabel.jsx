@@ -11,7 +11,7 @@ const ChatLabel = ({openMenu,setOpenMenu}) => {
         <Image src={assets.three_dots} alt='' className={`w-4  ${openMenu.open ? '' : 'hidden'} group-hover:block`}/>
         <div className={`absolute ${openMenu.open ? 'block' : 'hidden'} -right-36 top-6 bg-gray-700   border-radius: var(--radius-lg) w-max p-2`}>
         <div className='flex items-center gap-3 hover:bg-white/10 px-3 py-2   border-radius: var(--radius-lg)'>
-            <Image src={assets.pencile_icon} alt='' className='w-4'/>
+            <Image src={assets.pencil_icon} alt='' className='w-4'/>
             <p>Rename</p>
         </div>
         <div className='flex items-center gap-3 hover:bg-white/10 px-3 py-2 rounded-lg'>
