@@ -1,5 +1,6 @@
 import { assets } from '@/assets/assets'
 import React from 'react'
+import Image from 'next/image'
 
 const Message = ({roles,content}) => {
   return (
