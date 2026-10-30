@@ -4,12 +4,12 @@ import { Webhook } from "svix";
 import connectDB from "@/config/db";
 import User from "@/models/User";
 import { NextResponse } from "next/server";
-import Message from "@/components/Message";
+import { headers } from "next/headers";
 
 // Clerk calls this POST route when it sends a webhook event.
 export async function POST(req){
     // Create a verifier for the incoming webhook.
-    const wh = new Webhook(process.env.SINGING_SECRET)
+    const wh = new Webhook(process.env.SIGNING_SECRET)
 
     const headerPayload = await headers()
     const svixHeaders = {
@@ -19,7 +19,7 @@ export async function POST(req){
     };
 
     //get the payload and verfiy it
-    const Payload = req.json();
+    const Payload = await req.json();
     const body = JSON.stringify(payload);
     const {data,type} = wh.verify(body, svixHeaders)
 
@@ -27,7 +27,7 @@ export async function POST(req){
 
     const userData = {
         _id: data.id,
-        email: data.email_addresses[0].email_addresses,
+        email: data.email_addresses[0].email_address,
         name: `${data.first_name} ${data.last_name}`,
         image: data.image_url,
     };
@@ -46,6 +46,7 @@ export async function POST(req){
         
         case 'user.deleted':
             await User.findByIdAndDelete(data.id);
+            break; 
              
         default:
             break;
