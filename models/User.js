@@ -11,6 +11,15 @@ const UserSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
+if (!userData.email) {
+    console.error("No email found in Clerk webhook:", data.id);
+
+    return NextResponse.json(
+        { message: "Email address missing" },
+        { status: 400 }
+    );
+}
+
 const User =
     mongoose.models.User ||
     mongoose.model("User", UserSchema);

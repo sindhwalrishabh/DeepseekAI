@@ -9,12 +9,16 @@ export async function POST(req) {
     const evt = await verifyWebhook(req);
     const { data, type } = evt;
 
-    const userData = {
-        _id: data.id,
-        email: data.email_addresses[0].email_address,
-        name: `${data.first_name} ${data.last_name}`,
-        image: data.image_url,
-    };
+   const primaryEmail = data.email_addresses?.find(
+    email => email.id === data.primary_email_address_id
+   );
+
+   const userData = {
+    _id: data.id,
+    email: primaryEmail?.email_address || "",
+    name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+    image: data.image_url || "",
+   };
 
     await connectDB();
 
@@ -28,7 +32,7 @@ export async function POST(req) {
             break;
              
         case 'user.deleted':
-            await User.findByIdAndDelete (data.id)
+            await User.findByIdAndDelete(data.id)
             break;
         
         default:
