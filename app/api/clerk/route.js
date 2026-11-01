@@ -1,22 +1,13 @@
   
-import { Webhook } from "svix";
+import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import connectDB from "@/config/db";
 import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 
 export async function POST(req) {
-    const wh = new Webhook(process.env.SIGNING_SECRET)
-    const headerPayload = await headers()
-    const svixHeaders = {
-        "svix-id": headerPayload.get("svix-id"),
-        "svix-signature": headerPayload.get("svix-signature"),
-        "svix-timestamp": headerPayload.get("svix-timestamp"),
-    };
-
-    const payload = await req.json();
-    const body = JSON.stringify(payload);
-    const{data,type} = wh.verify(body, svixHeaders)
+    const evt = await verifyWebhook(req);
+    const { data, type } = evt;
 
     const userData = {
         _id: data.id,
@@ -33,15 +24,15 @@ export async function POST(req) {
             break;
 
         case 'user.updated':
-            await User.findByIdAndUpdate(user.id,userData)
+            await User.findByIdAndUpdate(data.id, userData, { new: true, upsert: true })            
             break;
              
         case 'user.deleted':
-            await User.findByIdAndDelete (user.id)
+            await User.findByIdAndDelete (data.id)
             break;
         
         default:
             break;
     }
-    return NextRequest.json({message: "Event received"}); 
+    return NextResponse.json({ message: "Event received" });
 }
