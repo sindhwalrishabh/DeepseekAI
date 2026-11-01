@@ -1,29 +1,22 @@
-// Svix helper for verifying the authenticity of Clerk webhooks.
+  
 import { Webhook } from "svix";
-// Used to connect to the database and access user records after a webhook event.
 import connectDB from "@/config/db";
 import User from "@/models/User";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 
-// Clerk calls this POST route when it sends a webhook event.
-export async function POST(req){
-    // Create a verifier for the incoming webhook.
+export async function POST(req) {
     const wh = new Webhook(process.env.SIGNING_SECRET)
-
     const headerPayload = await headers()
     const svixHeaders = {
         "svix-id": headerPayload.get("svix-id"),
-        "svix-timestamp": headerPayload.get("svix-timestamp"),
         "svix-signature": headerPayload.get("svix-signature"),
+        "svix-timestamp": headerPayload.get("svix-timestamp"),
     };
 
-    //get the payload and verfiy it
-    const Payload = await req.json();
+    const payload = await req.json();
     const body = JSON.stringify(payload);
-    const {data,type} = wh.verify(body, svixHeaders)
-
-    //prepare the user data to be saved in database
+    const{data,type} = wh.verify(body, svixHeaders)
 
     const userData = {
         _id: data.id,
@@ -32,25 +25,23 @@ export async function POST(req){
         image: data.image_url,
     };
 
-    // connect to the db
     await connectDB();
 
-    switch(type){
+    switch (type){
         case 'user.created':
             await User.create(userData)
             break;
 
         case 'user.updated':
-            await User.findByIdAndUpdate(data.id, userData)
+            await User.findByIdAndUpdate(user.id,userData)
+            break;
+             
+        case 'user.deleted':
+            await User.findByIdAndDelete (user.id)
             break;
         
-        case 'user.deleted':
-            await User.findByIdAndDelete(data.id);
-            break; 
-             
         default:
             break;
     }
-    return NextResponse.json({message: 'Event Received'});
-
+    return NextRequest.json({message: "Event received"}); 
 }

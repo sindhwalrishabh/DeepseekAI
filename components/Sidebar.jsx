@@ -14,7 +14,7 @@ const Sidebar = ({expand,setExpand}) => {
     z-50 max-md:absolute max-md:h-screen 
     ${expand ? 'p-4 w-64': 'md:w-20 w-0 max-md:overflow-hidden'}`}>
       <div>
-        <div className={'flex ${expand ? "flex-row gap-10" : "flex-col items-center gap-8"}'}>
+        <div className={`flex ${expand ? "flex-row gap-10" : "flex-col items-center gap-8"}`}>
             <Image className={expand ? "w-36" : "w-10"} src={expand ? assets.logo_text: assets.logo_icon} alt=""/>
             
             <div onClick={() => expand ? setExpand(false): setExpand(true)} className='group relative flex items-center justify-center
