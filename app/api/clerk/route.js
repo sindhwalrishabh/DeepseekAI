@@ -23,9 +23,16 @@ export async function POST(req) {
     await connectDB();
 
     switch (type){
-        case 'user.created':
-            await User.create(userData)
-            break;
+       case "user.created":
+
+         if (!userData.email) {
+        console.log("User creation skipped: Email not available", data.id);
+
+        break;
+    }
+
+    await User.create(userData);
+    break;
 
         case 'user.updated':
             await User.findByIdAndUpdate(data.id, userData, { new: true, upsert: true })            
