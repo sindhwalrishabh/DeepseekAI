@@ -1,3 +1,7 @@
+import { verifyWebhook } from "@clerk/clerk-sdk-node";
+import connectDB from "@/utils/connectDB";
+import User from "@/models/User";
+
 const evt = await verifyWebhook(req);
 const { data, type } = evt;
 
@@ -13,19 +17,13 @@ const primaryEmail =
         email => email.id === data.primary_email_address_id
     ) || data.email_addresses?.[0];
 
-const email = primaryEmail?.email_address?.trim() || "";
-
 const userData = {
     _id: data.id,
-    email: email,
-    name: `${data.first_name || ""} ${data.last_name || ""}`.trim()
-        || email.split("@")[0]
-        || "User",
+    email: primaryEmail?.email_address || "",
+    name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
     image: data.image_url || "",
 };
-
-console.log("[WEBHOOK] Email extracted:", Boolean(userData.email));
-console.log("[WEBHOOK] User data prepared:", data.id);
+console.log("[WEBHOOK] Connecting to MongoDB...");
 
 await connectDB();
 
