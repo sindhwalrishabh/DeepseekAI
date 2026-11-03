@@ -8,18 +8,24 @@ console.log(
     Boolean(data.email_addresses?.length)
 );
 
-const primaryEmail = data.email_addresses?.find(
-    email => email.id === data.primary_email_address_id
-);
+const primaryEmail =
+    data.email_addresses?.find(
+        email => email.id === data.primary_email_address_id
+    ) || data.email_addresses?.[0];
+
+const email = primaryEmail?.email_address?.trim() || "";
 
 const userData = {
     _id: data.id,
-    email: primaryEmail?.email_address || "",
-    name: `${data.first_name || ""} ${data.last_name || ""}`.trim(),
+    email: email,
+    name: `${data.first_name || ""} ${data.last_name || ""}`.trim()
+        || email.split("@")[0]
+        || "User",
     image: data.image_url || "",
 };
 
-console.log("[WEBHOOK] Connecting to MongoDB...");
+console.log("[WEBHOOK] Email extracted:", Boolean(userData.email));
+console.log("[WEBHOOK] User data prepared:", data.id);
 
 await connectDB();
 
