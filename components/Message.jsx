@@ -1,8 +1,17 @@
 import { assets } from '@/assets/assets'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Image from 'next/image'
-
+import Markdown from 'react'
+import Prism from 'prismjs'
 const Message = ({roles,content}) => {
+  useEffect(() => {
+    Prism.highlightAll()
+  },[content])
+
+  const copyMessage = () => {
+    navigator.clipboard.writeText(content)
+    toast.success()
+  }
   return (
     <div className='flex flex-col items-center w-full max-w-3xl text-sm'>
       <div className={`flex flex-col w-full mb-8 ${roles === 'user' && 'items-end'}`}>
@@ -14,12 +23,12 @@ const Message = ({roles,content}) => {
             {
                 roles === 'user' ?  (
                     <>
-                    <Image src={assets.copy_icon} alt='' className='w-4 cursor-pointer'/>
+                    <Image onClick={copyMessage} src={assets.copy_icon} alt='' className='w-4 cursor-pointer'/>
                     <Image src={assets.pencil_icon} alt='' className='w-4.5 cursor-pointer'/>
                     </>
                 ):(
                     <>
-                    <Image src={assets.copy_icon} alt='' className='w-4.5 cursor-pointer'/>
+                    <Image onClick={copyMessage} src={assets.copy_icon} alt='' className='w-4.5 cursor-pointer'/>
                     <Image src={assets.regenerate_icon} alt='' className='w-4 cursor-pointer'/>
                     <Image src={assets.like_icon} alt='' className='w-4 cursor-pointer'/>
                     <Image src={assets.dislike_icon} alt='' className='w-4 cursor-pointer'/>
@@ -39,7 +48,9 @@ const Message = ({roles,content}) => {
                 <>
                 <Image src={assets.logo_icon} alt='' className='h-9 w-9 p-1
                 border border-white/15 rounded-full'/>
-                <div className='space-y-4 w-full overflow'>{content}</div>
+                <div className='space-y-4 w-full overflow'>
+                  <Markdown> {content}</Markdown>
+                 </div>
                 </>
             )
 

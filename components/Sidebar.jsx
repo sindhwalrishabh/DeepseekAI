@@ -6,7 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import ChatLabel from './ChatLabel';
 const Sidebar = ({expand,setExpand}) => {
     const {openSignIn} = useClerk()
-    const {user} = useAppContext()
+    const {user,chats,createNewChat} = useAppContext()
     const [openMenu,setOpenMenu] = useState({id: 0, open: false })
 
   return (
@@ -33,7 +33,7 @@ const Sidebar = ({expand,setExpand}) => {
                 </div>
             </div>
         </div>
-        <button className={`mt-8 flex items-center justify-center cursor-pointer 
+        <button onClick={createNewChat} className={`mt-8 flex items-center justify-center cursor-pointer 
             ${expand ? "bg-primary hover:opacity-90 rounded-2xl gap-2 p-2.5 w-max": 
                 "group relative h-9 w-9 mx-auto hover:bg-gray-500/30 rounded-lg"}`}>
             <Image className={expand ? 'w-6': 'w-7'} 
@@ -51,7 +51,8 @@ const Sidebar = ({expand,setExpand}) => {
         <div className={`mt-8 text-white/25 text-sm ${expand ? "block" : "hidden"}`}>
             <p className='my-1'>Recents</p>
             {/* chatlabel */}
-        <ChatLabel openMenu={openMenu} setOpenMenu={setOpenMenu}/>
+            {chats.map((chat,index) =>
+        <ChatLabel key={index} name={chat.name} id={chat._id} openMenu={openMenu} setOpenMenu={setOpenMenu}/>)}
         </div>
       </div>
 
