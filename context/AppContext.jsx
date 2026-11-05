@@ -27,7 +27,7 @@ export const AppContextProvider = ({children}) => {
             }
             const token = await getToken();
 
-            await axios.post("/api/chat/create",{},{headers: {Authorization: `Bearer ${token}`}});
+            await axios.post("/api/chat/create",{},{headers: {Authorization: `Bearer ${token}`,},});
 
             // fetch user chats after creating new chat
             await fetchUsersChats();
@@ -43,37 +43,29 @@ const fetchUsersChats = async () => {
 
         const token = await getToken();
 
-        const { data } = await axios.get('/api/chat/get', {
+        console.log("GET API token available:", Boolean(token));
+
+        const { data } = await axios.get("/api/chat/get", {
             headers: {
-                Authorization: `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
         });
 
-        if (!data.success) {
-            toast.error(data.message);
-            return;
+        if (data.success) {
+            const chatList = Array.isArray(data.data) ? data.data : [];
+
+            chatList.sort(
+                (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+            );
+
+            setChats(chatList);
+
+            if (chatList.length > 0) {
+                setSelectedChat(chatList[0]);
+            }
         }
-
-        const chatList = Array.isArray(data.data) ? data.data : [];
-
-        chatList.sort(
-            (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-
-        setChats(chatList);
-
-        if (chatList.length === 0) {
-            await createNewChat();
-            return;
-        }
-
-        setSelectedChat(chatList[0]);
-
-        console.log("Fetched chats:", chatList);
-        console.log("Selected chat:", chatList[0]);
-
     } catch (error) {
-        toast.error(error.message || "Error fetching chats");
+        console.log("GET API error:", error.response?.data || error.message);
     }
 };
     useEffect(() => {

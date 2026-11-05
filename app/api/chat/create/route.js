@@ -6,6 +6,15 @@ import { auth } from "@clerk/nextjs/server";
 export async function POST(req) {
     try {
         const {userId } = await auth();
+
+        console.log("CREATE API User ID:", userId);
+        console.log(
+        "Authorization Header Present:",
+        Boolean(req.headers.get("authorization"))
+        );
+
+         console.log("User ID:", userId);
+        console.log("Authorization Header:", req.headers.get("authorization"));
         
         if(!userId){
             return NextResponse.json({success: false,message:"User not authenticated"}, {status: 401});

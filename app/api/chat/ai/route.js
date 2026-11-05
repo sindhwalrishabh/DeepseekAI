@@ -5,6 +5,11 @@ import connectDB from "@/config/db";
 import Chat from "@/models/Chat"; 
 import { NextResponse } from "next/server";
 // initialize the OpenAI client with your API key
+
+console.log(
+    "DeepSeek API Key Loaded:",
+    Boolean(process.env.DEEPSEEKAI_API_KEY)
+);
 const openai = new OpenAI({
         baseURL: 'https://api.deepseek.com',
         apiKey: process.env.DEEPSEEKAI_API_KEY,
@@ -54,4 +59,8 @@ export async function POST(req){
     }catch (error) {
         return NextResponse.json({success: false, message: error.message}, {status: 500});
     }
+    console.log(
+    "DeepSeek API Key Loaded:",
+    Boolean(process.env.DEEPSEEKAI_API_KEY)
+);
 }
