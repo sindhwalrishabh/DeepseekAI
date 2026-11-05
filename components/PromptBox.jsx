@@ -16,6 +16,7 @@ const PromptBox = ({setIsLoading,isLoading}) => {
             e.preventDefault();
             sendPrompt(e);
         }
+        //bb
     };
     const sendPrompt = async (e) => {
         const promptCopy = prompt;
